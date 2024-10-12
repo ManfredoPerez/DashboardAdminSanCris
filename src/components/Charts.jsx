@@ -30,7 +30,7 @@ const Charts = () => {
             const posts = result.data
 
             // Contar los estados de las publicaciones
-            const assigned = posts.filter(post => post.estado === 'asignado').length
+            const assigned = posts.filter(post => post.estado === 'pendiente').length
             const inProcess = posts.filter(post => post.estado === 'en progreso').length
             const finalized = posts.filter(post => post.estado === 'finalizado').length
 
@@ -44,7 +44,7 @@ const Charts = () => {
 
     // Datos para el gráfico de barras horizontales
     const barChartData = {
-        labels: ['Asignado', 'En Proceso', 'Finalizado'],
+        labels: ['Pendiente', 'En Proceso', 'Finalizado'],
         datasets: [
             {
                 label: 'Estados de Publicaciones',

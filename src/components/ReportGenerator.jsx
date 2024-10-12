@@ -1,5 +1,9 @@
 import { useState } from 'react'
 import { PDFDownloadLink, Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer'
+import * as XLSX from 'xlsx'
+import { saveAs } from 'file-saver'
+import Papa from 'papaparse'
+
 
 const styles = StyleSheet.create({
   page: {
@@ -42,8 +46,7 @@ const styles = StyleSheet.create({
   }
 })
 
-const MyDocument = ({posts, users}) => (
-    
+const MyDocument = ({posts}) => (
   <Document>
     <Page size="A4" style={styles.page}>
       <View style={styles.section}>
@@ -57,7 +60,7 @@ const MyDocument = ({posts, users}) => (
               <Text style={styles.tableCell}>Problema</Text> 
             </View> 
             <View style={styles.tableCol}> 
-              <Text style={styles.tableCell}>Descripcion</Text> 
+              <Text style={styles.tableCell}>Descripción</Text> 
             </View> 
             <View style={styles.tableCol}> 
               <Text style={styles.tableCell}>Estado</Text> 
@@ -85,8 +88,32 @@ const MyDocument = ({posts, users}) => (
   </Document>
 )
 
-export default function ReportGenerator({ posts, users }) {
+export default function ReportGenerator({ posts }) {
   const [reportType, setReportType] = useState('posts')
+
+  // Filtrar los datos para incluir solo las columnas relevantes
+  const filteredData = posts.map(post => ({
+    ID: post.id,
+    Problema: post.problema,
+    Descripción: post.body,
+    Estado: post.estado
+  }))
+
+
+  // Exportar a Excel con columnas específicas
+  const exportToExcel = () => {
+    const worksheet = XLSX.utils.json_to_sheet(filteredData)
+    const workbook = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Report")
+    XLSX.writeFile(workbook, 'sancrist_report.xlsx')
+  }
+
+  // Exportar a CSV con columnas específicas
+  const exportToCSV = () => {
+    const csv = Papa.unparse(filteredData)
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
+    saveAs(blob, 'sancrist_report.csv')
+  }
 
   return (
     <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
@@ -101,15 +128,29 @@ export default function ReportGenerator({ posts, users }) {
           className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
         >
           <option value="posts">Reporte Publicaciones</option>
-          {/* <option value="users">Reporte Usuarios</option> */}
+          {/* Puedes agregar más tipos de reportes aquí */}
         </select>
       </div>
       <div className="flex items-center justify-between">
         <PDFDownloadLink document={<MyDocument posts={posts} />} fileName="sancrist_report.pdf">
           {({ blob, url, loading, error }) =>
-            loading ? 'Loading document...' : 'Download PDF'
+            loading ? 'Cargando documento...' : 'Descargar PDF'
           }
         </PDFDownloadLink>
+
+        <button
+          onClick={exportToExcel}
+          className="ml-4 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+        >
+          Descargar Excel
+        </button>
+
+        <button
+          onClick={exportToCSV}
+          className="ml-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        >
+          Descargar CSV
+        </button>
       </div>
     </div>
   )

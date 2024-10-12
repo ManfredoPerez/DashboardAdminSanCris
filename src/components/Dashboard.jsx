@@ -75,7 +75,7 @@ export default function Dashboard({ session }) {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
             <div className="bg-white p-4 rounded-lg shadow">
-              <h2 className="text-xl font-bold mb-4">Device Sessions</h2>
+              <h2 className="text-xl font-bold mb-4">Sesiones de dispositivos</h2>
               <ResponsiveContainer width="100%" height={200}>
                 <BarChart data={dataGrafico} layout="vertical">
                   <CartesianGrid strokeDasharray="3 3" />
