@@ -10,7 +10,9 @@ export default function Login() {
 
     try {
       setLoading(true)
-      const { error } = await supabase.auth.signInWithOtp({ email })
+      const { error } = await supabase.auth.signInWithOtp({ email }, {
+        redirectTo: 'https://manfredoperez.github.io/DashboardAdminSanCris/',
+      })
       if (error) throw error
       alert('Revise su correo electrónico para ver el enlace de inicio de sesión!')
     } catch (error) {
